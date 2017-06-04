@@ -1,0 +1,3 @@
+[submodule "dotnet-controls"]
+	path = dotnet-controls
+	url = git@pontech.dyndns.org:~/windows/dotnet-controls
