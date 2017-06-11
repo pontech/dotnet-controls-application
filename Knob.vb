@@ -83,8 +83,8 @@ Public Class Knob
     End Sub
 
     Protected Overrides Sub OnPaint(pe As PaintEventArgs)
-        Dim xoffset As Single = -Math.Sin(_Value / _Maximum * Math.PI * 2) * (Me.Width / 2 - IndicatorRadius)
-        Dim yoffset As Single = Math.Cos(_Value / _Maximum * Math.PI * 2) * (Me.Height / 2 - IndicatorRadius)
+        Dim xoffset As Single = Math.Sin(_Value / _Maximum * Math.PI * 2) * (Me.Width / 2 - IndicatorRadius)
+        Dim yoffset As Single = -Math.Cos(_Value / _Maximum * Math.PI * 2) * (Me.Height / 2 - IndicatorRadius)
 
         MyBase.OnPaint(pe)
         ' Draw Knob
