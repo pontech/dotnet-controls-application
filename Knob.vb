@@ -94,10 +94,9 @@ Public Class Knob
 
     End Sub
 
-    Protected Overrides Sub OnMouseWheel(e As MouseEventArgs)
-        MyBase.OnMouseWheel(e)
+    Private Sub twist_wheel(ByVal direction As Integer)
         'Debug.Print(e.Delta)
-        If e.Delta > 0 Then
+        If direction > 0 Then
             _Value += _Increment
         Else
             _Value -= _Increment
@@ -108,6 +107,24 @@ Public Class Knob
         Value = _Value
         'Debug.Print(Value)
         'Me.Invalidate()
+    End Sub
+
+    Protected Overrides Sub OnMouseWheel(e As MouseEventArgs)
+        MyBase.OnMouseWheel(e)
+        twist_wheel(e.Delta)
+    End Sub
+
+    Protected Overrides Sub OnMouseMove(e As MouseEventArgs)
+        Static y_last As Integer
+        Dim Delta_y As Integer
+        MyBase.OnMouseMove(e)
+
+        Delta_y = y_last - e.Y
+
+        If (e.Button = MouseButtons.Left) Then
+            twist_wheel(Delta_y)
+        End If
+        y_last = e.Y
     End Sub
 
     Protected Overrides Sub OnResize(e As EventArgs)
