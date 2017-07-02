@@ -12,9 +12,15 @@ Public Class Knob
     Private _Maximum As Single = 180.0
     Private _Value As Single
     Private _Increment As Single = 1.0
+    Private _y_last As Integer
+    Private _x_last As Integer
+    Private _angle As Single
+    Private _angle_last As Single
+    Private _angle_delta As Single
 
     Public BrushKnobColor As SolidBrush
     Public BrushIndicatorColor As SolidBrush
+    Public PenMouseLineColor As Pen
 
     Private KnobCenter As Point
     Private IndicatorRadius As Single
@@ -77,6 +83,7 @@ Public Class Knob
         'SetStyle()
         BrushKnobColor = New SolidBrush(Color.Gray)
         BrushIndicatorColor = New SolidBrush(Color.Black)
+        PenMouseLineColor = New Pen(Color.Red)
 
         KnobCenter = New Point()
         IndicatorRadius = 5.0
@@ -91,6 +98,9 @@ Public Class Knob
         pe.Graphics.FillEllipse(BrushKnobColor, 0, 0, Me.Width, Me.Height)
         ' Draw Indicator
         pe.Graphics.FillEllipse(BrushIndicatorColor, KnobCenter.X - IndicatorRadius + xoffset, KnobCenter.Y - IndicatorRadius + yoffset, IndicatorRadius * 2, IndicatorRadius * 2)
+
+        ' Draw line from control center to mouse xy
+        pe.Graphics.DrawLine(PenMouseLineColor, KnobCenter.X, KnobCenter.Y, _x_last, _y_last)
 
     End Sub
 
@@ -115,16 +125,35 @@ Public Class Knob
     End Sub
 
     Protected Overrides Sub OnMouseMove(e As MouseEventArgs)
-        Static y_last As Integer
         Dim Delta_y As Integer
         MyBase.OnMouseMove(e)
 
-        Delta_y = y_last - e.Y
+        Delta_y = _y_last - e.Y
+
+        'KnobCenter.X, KnobCenter.Y
+        Dim o As Single = e.X - KnobCenter.X
+        Dim a As Single = e.Y - KnobCenter.Y
+        _angle = Math.Atan(o / a)
+
+        o = _x_last - KnobCenter.X
+        a = _y_last - KnobCenter.Y
+        _angle_last = Math.Atan(o / a)
+
+        _angle *= 180 / Math.PI
+        _angle_last *= 180 / Math.PI
+
+        _angle_delta = (_angle_last - _angle)
+
 
         If (e.Button = MouseButtons.Left) Then
-            twist_wheel(Delta_y)
+            'twist_wheel(Delta_y)
+            twist_wheel(_angle_delta)
         End If
-        y_last = e.Y
+
+        Debug.Print(_angle_last.ToString("0.00") + ", " + _angle.ToString("0.00") + ", " + _angle_delta.ToString("0.00"))
+
+        _y_last = e.Y
+        _x_last = e.X
     End Sub
 
     Protected Overrides Sub OnResize(e As EventArgs)
